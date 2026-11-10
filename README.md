@@ -6,7 +6,7 @@ Landing page comercial em React + Vite + TypeScript + Tailwind CSS + Lucide Icon
 ## Instalação local
 Requer Node.js 22+.
 ```bash
-npm ci
+npm install
 npm run dev
 npm run build
 npm run preview
