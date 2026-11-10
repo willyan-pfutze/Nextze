@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowDown, ArrowRight, ArrowUpRight, Blocks, BriefcaseBusiness, Check, ChevronRight, Code2, Factory, GitMerge, Hammer, Headphones, Layers3, Mail, Menu, MonitorCog, MoveUpRight, Network, ShoppingBasket, ShoppingCart, Sparkles, Target, Workflow, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Blocks, BriefcaseBusiness, ChevronRight, Code2, Factory, GitMerge, Hammer, Headphones, Layers3, Mail, Menu, MonitorCog, Network, ShoppingBasket, ShoppingCart, Sparkles, Target, Workflow, X } from 'lucide-react';
 
 const whatsapp = (import.meta.env.VITE_WHATSAPP_NUMBER || '').replace(/\D/g,'');
 const email = (import.meta.env.VITE_CONTACT_EMAIL || '').trim();
