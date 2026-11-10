@@ -13,10 +13,18 @@ npm run preview
 ```
 
 ## Contatos comerciais
-Preencha os valores reais no arquivo `.env.local` (não commitado) ou nas **Variables** do repositório em **Settings → Secrets and variables → Actions → Variables**:
-- `VITE_WHATSAPP_NUMBER`: número com DDI e DDD, somente dígitos. Ex.: 5511999999999 (exemplo ilustrativo, NÃO é um contato da NEXTZE).
-- `VITE_CONTACT_EMAIL`: e-mail comercial real.
-Os botões só aparecem quando o respectivo canal estiver configurado. Nenhum canal de contato fictício foi publicado.
+O site usa temporariamente dois números de WhatsApp autorizados pelo responsável:
+- DDD 51: `5551995068708`
+- DDD 11: `5511933620498`
+
+Eles aparecem como duas opções na seção Contato. Os botões das demais seções direcionam para o primeiro canal (DDD 51).
+
+Ao criar canais corporativos, defina as **Variables** em **Settings → Secrets and variables → Actions → Variables**:
+- `VITE_WHATSAPP_NUMBER_51` — substitui o WhatsApp DDD 51 (somente dígitos, com DDI 55).
+- `VITE_WHATSAPP_NUMBER_11` — substitui o WhatsApp DDD 11.
+- `VITE_CONTACT_EMAIL` — insere o e-mail comercial após sua criação.
+
+Os contatos temporários são valores padrão do código e, por isso, públicos no repositório e na página. Para desativar um canal, configure a variável correspondente como string vazia. Ajuste também os rótulos e números exibidos no componente `src/App.tsx` ao substituí-los.
 
 ## Publicação no GitHub Pages
 1. Em **Settings → Pages → Build and deployment**, selecione **GitHub Actions**.
