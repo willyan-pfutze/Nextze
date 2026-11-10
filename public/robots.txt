@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nextze.com.br/sitemap.xml
