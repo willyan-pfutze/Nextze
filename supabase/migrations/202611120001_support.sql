@@ -71,7 +71,7 @@ create table if not exists public.support_sla(
  start_time time, end_time time, holidays date[] not null default array[]::date[],
  notes text, created_at timestamptz not null default now()
 );
-create unique index if not exists support_tickets_protocol_idx on public.support_tickets(protocol);
+-- A unicidade do protocolo já está garantida pela restrição UNIQUE da tabela.
 create index if not exists support_tickets_email_time_idx on public.support_tickets(requester_email,created_at);
 create index if not exists support_history_ticket_idx on public.support_history(ticket_id,created_at);
 create index if not exists support_attachments_ticket_idx on public.support_attachments(ticket_id);
@@ -95,7 +95,7 @@ alter table public.support_history enable row level security;
 alter table public.support_messages enable row level security;
 alter table public.support_agents enable row level security;
 alter table public.support_sla enable row level security;
-revoke all on all tables in schema public from anon, authenticated;
+-- Restrinja apenas as tabelas NEXTZE: nunca revogue permissões de outros aplicativos do projeto.\nrevoke all on public.support_companies,public.support_systems,public.support_kb,public.support_tickets,public.support_attachments,public.support_history,public.support_messages,public.support_agents,public.support_sla from anon, authenticated;
 revoke all on sequence public.nextze_ticket_seq from anon, authenticated;
 -- Private storage bucket; server-side service role only. No public URL.
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
