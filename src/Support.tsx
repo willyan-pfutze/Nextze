@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock3, FileText, Headphones, Info, LockKeyhole, Menu, Search, Send, ShieldCheck, UploadCloud, X } from 'lucide-react';
+import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock3, FileText, Headphones, Info, LockKeyhole, Menu, Search, Send, ShieldCheck, UploadCloud, X } from 'lucide-react';
 import './styles.css';
 import './support.css';
 
@@ -9,7 +9,7 @@ const endpoint = (import.meta.env.VITE_SUPPORT_ENDPOINT || '').trim();
 const siteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
 const ready = Boolean(endpoint && siteKey);
 const categories = ['Todas as categorias','Primeiros passos','Acesso e autenticação','Utilização dos sistemas','Erros e problemas conhecidos','Procedimentos operacionais','Administração do sistema','Solicitação de suporte'];
-const systems = (import.meta.env.VITE_SUPPORT_SYSTEMS || '').split(',').map((x:string)=>x.trim()).filter(Boolean);
+const systems:string[] = String(import.meta.env.VITE_SUPPORT_SYSTEMS || '').split(',').map((x:string)=>x.trim()).filter(Boolean);
 type FormFields = {company:string; requester:string; email:string; phone:string; system:string; type:string; title:string; description:string; occurred_at:string; impact:string; attempted:string; priority:'normal'|'urgente'; privacy:boolean};
 const initial:FormFields = {company:'',requester:'',email:'',phone:'',system:'',type:'',title:'',description:'',occurred_at:'',impact:'',attempted:'',priority:'normal',privacy:false};
 const maxFiles = 3, maxBytes = 5 * 1024 * 1024, maxTotal = 12 * 1024 * 1024;
