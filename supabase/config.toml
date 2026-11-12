@@ -1,0 +1,4 @@
+project_id = ""
+
+[functions.support-intake]
+verify_jwt = false
