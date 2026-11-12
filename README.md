@@ -3,6 +3,11 @@
 
 Landing page comercial em React + Vite + TypeScript + Tailwind CSS + Lucide Icons. Sem backend ou armazenamento de dados.
 
+## Central de Suporte
+A página `/suporte/` foi adicionada sem substituir a landing page. Inclui base de conhecimento sem artigos inventados, formulário e política de primeira resposta. O formulário fica **desabilitado** até que o backend Supabase, o antispam e os controles de segurança sejam configurados e testados. Para implantação, documentação técnica, dependências e pendências, leia [docs/CENTRAL-DE-SUPORTE.md](docs/CENTRAL-DE-SUPORTE.md).
+
+A página `/privacidade/` contém informações preliminares e precisa de revisão antes da ativação da coleta de dados reais.
+
 ## Instalação local
 Requer Node.js 22+.
 ```bash
