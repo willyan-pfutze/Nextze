@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock3, FileText, Headphones, Info, LockKeyhole, Mail, Menu, Search, Send, ShieldCheck, UploadCloud, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock3, FileText, Headphones, Info, LockKeyhole, Menu, Search, Send, ShieldCheck, UploadCloud, X } from 'lucide-react';
 import './styles.css';
 import './support.css';
 
