@@ -25,6 +25,7 @@ jobs:
           VITE_WHATSAPP_NUMBER: ${{ vars.VITE_WHATSAPP_NUMBER }}
           VITE_CONTACT_EMAIL: ${{ vars.VITE_CONTACT_EMAIL }}
           VITE_SUPPORT_ENABLED: ${{ vars.VITE_SUPPORT_ENABLED || 'false' }}
+          VITE_SUPPORT_ATTACHMENTS_ENABLED: 'false'
           VITE_SUPPORT_ENDPOINT: ${{ vars.VITE_SUPPORT_ENDPOINT || 'https://jqeonloeyvdapwmafnkm.supabase.co/functions/v1/support-intake' }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
           VITE_SUPPORT_SYSTEMS: ${{ vars.VITE_SUPPORT_SYSTEMS }}
