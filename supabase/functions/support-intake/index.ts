@@ -4,6 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.8';
 
 const allowed = (Deno.env.get('SUPPORT_ALLOWED_ORIGINS') || 'https://nextze.com.br,https://www.nextze.com.br').split(',').map(s=>s.trim());
 const intakeEnabled = Deno.env.get('SUPPORT_INTAKE_ENABLED') === 'true';
+// Keep attachments off until the organization provides a malware scanning service.
+const attachmentsEnabled = Deno.env.get('SUPPORT_ATTACHMENTS_ENABLED') === 'true';
 const maxFile = 5 * 1024 * 1024;
 const maxTotal = 12 * 1024 * 1024;
 const accepted = new Set(['image/jpeg','image/png','application/pdf','text/plain']);
@@ -49,6 +51,7 @@ Deno.serve(async(req)=>{
   const dt=new Date(occurred);
   if(Number.isNaN(dt.getTime())||dt.getTime()>Date.now()+86400000)throw Error('Data da ocorrência inválida.');
   const uploads=form.getAll('evidences').filter(x=>x instanceof File) as File[];
+  if(uploads.length && !attachmentsEnabled) return response({error:'O envio de evidências ainda não está disponível. Registre a solicitação sem anexos.'},422,origin);
   if(uploads.length>3||uploads.reduce((n,f)=>n+f.size,0)>maxTotal)throw Error('Limite de 3 anexos ou 12 MB excedido.');
   const verified:{file:File;bytes:Uint8Array;mime:string}[]=[];
   for(const file of uploads){
