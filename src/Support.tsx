@@ -7,7 +7,8 @@ import './support.css';
 const home = '../';
 const endpoint = (import.meta.env.VITE_SUPPORT_ENDPOINT || '').trim();
 const siteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-// O formulário exige ativação explícita, além da configuração dos serviços externos.\nconst ready = Boolean(import.meta.env.VITE_SUPPORT_ENABLED === 'true' && /^https:\/\//.test(endpoint) && siteKey);
+// O formulário exige ativação explícita, além da configuração dos serviços externos.
+const ready = Boolean(import.meta.env.VITE_SUPPORT_ENABLED === 'true' && /^https:\/\//.test(endpoint) && siteKey);
 const categories = ['Todas as categorias','Primeiros passos','Acesso e autenticação','Utilização dos sistemas','Erros e problemas conhecidos','Procedimentos operacionais','Administração do sistema','Solicitação de suporte'];
 const systems:string[] = String(import.meta.env.VITE_SUPPORT_SYSTEMS || '').split(',').map((x:string)=>x.trim()).filter(Boolean);
 type FormFields = {company:string; requester:string; email:string; phone:string; system:string; type:string; title:string; description:string; occurred_at:string; impact:string; attempted:string; priority:'normal'|'urgente'; privacy:boolean};
@@ -55,7 +56,8 @@ function App(){
   try{
    const body=new FormData();
    for(const [k,v] of Object.entries(fields))body.append(k,String(v));
-   body.set('occurred_at', new Date(fields.occurred_at).toISOString());\n   body.append('turnstile_token',token);
+   body.set('occurred_at', new Date(fields.occurred_at).toISOString());
+   body.append('turnstile_token',token);
    files.forEach(file=>body.append('evidences',file,file.name));
    const response=await fetch(endpoint,{method:'POST',body,headers:{'Accept':'application/json'}});
    const json=await response.json().catch(()=>({}));
