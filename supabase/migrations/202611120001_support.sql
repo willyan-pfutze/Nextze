@@ -82,7 +82,7 @@ begin
  values(new.id,new.status,'sistema','Solicitação recebida');
  return new;
 end; $$;
-drop trigger if exists support_ticket_insert_history on public.support_tickets;
+-- Esta função é exclusiva do gatilho, não uma API RPC pública.\nrevoke all on function public.nextze_ticket_initial_history() from public, anon, authenticated;\ndrop trigger if exists support_ticket_insert_history on public.support_tickets;
 create trigger support_ticket_insert_history after insert on public.support_tickets
 for each row execute function public.nextze_ticket_initial_history();
 -- All tables default DENY for anon/authenticated clients.
