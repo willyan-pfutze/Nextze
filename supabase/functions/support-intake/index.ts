@@ -3,6 +3,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.8';
 
 const allowed = (Deno.env.get('SUPPORT_ALLOWED_ORIGINS') || 'https://nextze.com.br,https://www.nextze.com.br').split(',').map(s=>s.trim());
+const intakeEnabled = Deno.env.get('SUPPORT_INTAKE_ENABLED') === 'true';
 const maxFile = 5 * 1024 * 1024;
 const maxTotal = 12 * 1024 * 1024;
 const accepted = new Set(['image/jpeg','image/png','application/pdf','text/plain']);
@@ -24,7 +25,7 @@ Deno.serve(async(req)=>{
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'content-type','Access-Control-Max-Age':'3600','Vary':'Origin'}});
  if(req.method!=='POST')return response({error:'Método não permitido'},405,origin);
  const url=Deno.env.get('SUPABASE_URL'), key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'), captchaSecret=Deno.env.get('TURNSTILE_SECRET_KEY');
- if(!url||!key||!captchaSecret)return response({error:'Atendimento digital indisponível no momento.'},503,origin);
+ if(!intakeEnabled||!url||!key||!captchaSecret||!Deno.env.get('RESEND_API_KEY')||!Deno.env.get('SUPPORT_FROM_EMAIL'))return response({error:'Atendimento digital indisponível no momento.'},503,origin);
  if(Number(req.headers.get('content-length')||0)>15*1024*1024)return response({error:'Tamanho total excedido.'},413,origin);
  let ticketId:string|undefined;const stored:string[]=[];
  const db=createClient(url,key,{auth:{persistSession:false}});
@@ -94,6 +95,6 @@ Deno.serve(async(req)=>{
   if(ticketId){for(const path of stored)await db.storage.from('nextze-support').remove([path]);await db.from('support_tickets').delete().eq('id',ticketId);}
   const msg=e instanceof Error?e.message:'Erro ao registrar solicitação.';
   const safe=['Confira os campos obrigatórios e os limites de texto.','Informe um e-mail válido.','Seleção inválida.','Data da ocorrência inválida.','Limite de 3 anexos ou 12 MB excedido.','Anexo não permitido. Use JPG, PNG, PDF ou TXT de até 5 MB.','O conteúdo de um anexo não corresponde ao tipo informado.'].includes(msg)?msg:'Não foi possível concluir o registro com segurança. Tente novamente mais tarde.';
-  return response({error:safe},400,origin);
+  return response({error:safe},safe.startsWith('Não foi possível concluir')?503:400,origin);
  }
 });
