@@ -108,3 +108,6 @@ O domínio `nextze.com.br` já foi cadastrado para envio em `sa-east-1`, mas **a
 - Teste SQL com transação desfeita confirmou geração de protocolo `NXZ-2026-000001` e inserção automática de histórico. Contagem após rollback: zero chamados reais.
 - Verificado: nove tabelas `support_*` com RLS, `anon` sem SELECT/INSERT e armazenamento não público.
 - Pendências: Turnstile configurado e validado, varredura antimalware de anexos, validação de ponta a ponta, remetente Resend verificado, processamento de falhas de notificações e política de dados revisada. **Não habilitar `VITE_SUPPORT_ENABLED=true` sem resolver essas pendências.**
+
+## Proteção de anexos — 12/11/2026
+O envio de evidências está desativado por padrão, tanto no navegador (`VITE_SUPPORT_ATTACHMENTS_ENABLED=false`) quanto na Edge Function (`SUPPORT_ATTACHMENTS_ENABLED` diferente de `true`). O backend responde 422 a arquivos enquanto o scanner antimalware não estiver implementado. Não configure esses dois valores como `true` antes de integrar varredura automática e um fluxo seguro de quarentena, reprovação e exclusão de anexos. O bucket segue privado.
