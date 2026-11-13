@@ -35,8 +35,8 @@ O número de protocolo, a gravação, os uploads e a entrega de resposta ao clie
 9. Em **GitHub → Settings → Secrets and variables → Actions → Variables**, configurar:
    - `VITE_SUPPORT_ENABLED=false` (alterar para `true` apenas após testes completos e liberação expressa)\n   - `VITE_SUPPORT_ENDPOINT=https://<PROJECT_REF>.supabase.co/functions/v1/support-intake`
    - `VITE_TURNSTILE_SITE_KEY=<site_key_publica>`
-   - `VITE_SUPPORT_SYSTEMS=Sistema 1,Sistema 2` com nomes reais (ou vazio).
-10. Reexecutar o deploy do GitHub Pages. Somente com endpoint **e** site key preenchidos a interface libera o formulário.
+   - `VITE_SUPPORT_SYSTEMS=` com os nomes verdadeiros dos sistemas, separados por vírgula (ou vazio).\n   - `VITE_SUPPORT_ENABLED=true` **somente após os testes de banco, anexos, envio e segurança**.
+10. Reexecutar o deploy do GitHub Pages. Somente com endpoint HTTPS, site key e ativação explícita a interface libera o formulário. Configure também `SUPPORT_INTAKE_ENABLED=true` no backend **apenas após os testes**; a função exige Resend configurado antes de aceitar novos registros.
 
 ### Limitação importante
 Os controles atuais de anexos fazem checagem de tipo/assinatura e tamanho, mas **não** substituem varredura antimalware especializada. Antes de abrir uploads a clientes externos, contratar e integrar scanner, configurar retenção e testar arquivos maliciosos em ambiente isolado. Não compartilhe anexos por URLs públicas.
@@ -83,3 +83,15 @@ Os registros são para autenticação de e-mail transacional; **não criam uma c
 - GitHub Pages preserva a landing e exibe a página de suporte informativa.
 - A abertura online só é liberada após configurar todas as variáveis e ativar explicitamente `VITE_SUPPORT_ENABLED=true`.
 - Antes disso, o formulário é intencionalmente desabilitado; não anunciar o fluxo de protocolo como já funcional.
+
+## E-mail NEXTZE — Resend
+O domínio `nextze.com.br` já foi cadastrado para envio em `sa-east-1`, mas **a verificação DNS ainda está pendente**. Não foram alterados registros DNS no Registro.br. Configurações exigidas pelo provedor:
+
+| Tipo | Nome | Valor | Prioridade |
+|---|---|---|---|
+| TXT | `resend._domainkey` | `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOO/MWum1XbQ8SfyJy0hqAc8RSYUwtCR7s1kETEIcF2y+KXJiKwxmZL/fMY+KPM67YCnZe1ZIvI/YEqg/a//yOt5NYCXPxM3UEr/zBUJKTBuQWB0ff8Ee54Q/I4tUdClCqaUeE2zrBwJMgyW4xPgBW3vuix2cINLunKOEuyYjiTQIDAQAB` | — |
+| MX | `send` | `feedback-smtp.sa-east-1.amazonses.com` | 10 |
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` | — |
+| CNAME | `rsend` | `send.forge.rmta.net` | — |
+
+**Atenção:** esses registros são para envio transacional; não substitua os quatro A do GitHub Pages nem o CNAME `www`, e não apague os registros do e-mail de recebimento. O domínio verificado para enviar e-mails não cria, por si só, uma caixa de entrada em `suporte@nextze.com.br`.
