@@ -33,7 +33,7 @@ O número de protocolo, a gravação, os uploads e a entrega de resposta ao clie
 7. Revisar requisitos LGPD, autorização dos titulares, política de retenção, backups, monitoramento, limites de abuso e scanner antimalware para anexos. Validar prazos/horários contratuais e feriados; a mensagem de prazo é apenas referência de primeira resposta.
 8. Implantar `supabase functions deploy support-intake --no-verify-jwt` **somente** após validação de segurança. O endpoint precisa permanecer protegido por Turnstile, origem permitida e limitação de requisições.
 9. Em **GitHub → Settings → Secrets and variables → Actions → Variables**, configurar:
-   - `VITE_SUPPORT_ENDPOINT=https://<PROJECT_REF>.supabase.co/functions/v1/support-intake`
+   - `VITE_SUPPORT_ENABLED=false` (alterar para `true` apenas após testes completos e liberação expressa)\n   - `VITE_SUPPORT_ENDPOINT=https://<PROJECT_REF>.supabase.co/functions/v1/support-intake`
    - `VITE_TURNSTILE_SITE_KEY=<site_key_publica>`
    - `VITE_SUPPORT_SYSTEMS=Sistema 1,Sistema 2` com nomes reais (ou vazio).
 10. Reexecutar o deploy do GitHub Pages. Somente com endpoint **e** site key preenchidos a interface libera o formulário.
@@ -65,3 +65,21 @@ Acompanhamento por link temporário assinado enviado ao e-mail **verificado** ou
 - Serviço de varredura antimalware, armazenamento e retenção: dependem da solução e dos contratos.
 
 Nenhum contrato, licença, conta de serviços externos ou chave foi criado por esse commit.
+
+## Status de conexão em 12/11/2026
+A integração Supabase está conectada ao ChatGPT, porém a conta acessível atualmente **não apresenta projetos existentes**. É necessário selecionar a organização correta e criar um projeto (custos devem ser apresentados e aprovados previamente). Não há migração aplicada, função implantada ou serviço de banco ativo.
+O domínio `nextze.com.br` foi cadastrado no Resend, na região São Paulo, mas **ainda não está verificado**. Os DNS de envio estão pendentes. Não foram alterados registros DNS, enviados e-mails, nem configuradas credenciais.
+
+## DNS pendente de verificação Resend (Registro.br)
+Adicionar sem remover os registros A/CNAME do GitHub Pages e sem substituir MX da raiz.
+- TXT: nome `resend._domainkey`, valor `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOO/MWum1XbQ8SfyJy0hqAc8RSYUwtCR7s1kETEIcF2y+KXJiKwxmZL/fMY+KPM67YCnZe1ZIvI/YEqg/a//yOt5NYCXPxM3UEr/zBUJKTBuQWB0ff8Ee54Q/I4tUdClCqaUeE2zrBwJMgyW4xPgBW3vuix2cINLunKOEuyYjiTQIDAQAB`
+- MX: nome `send`, prioridade `10`, valor `feedback-smtp.sa-east-1.amazonses.com`
+- TXT: nome `send`, valor `v=spf1 include:amazonses.com ~all`
+- CNAME: nome `rsend`, valor `send.forge.rmta.net`
+
+Os registros são para autenticação de e-mail transacional; **não criam uma caixa postal**. É necessária caixa ou alias para receber respostas em `suporte@nextze.com.br`. Após a propagação, verificar o domínio pelo painel/API Resend.
+
+## Controle de publicação
+- GitHub Pages preserva a landing e exibe a página de suporte informativa.
+- A abertura online só é liberada após configurar todas as variáveis e ativar explicitamente `VITE_SUPPORT_ENABLED=true`.
+- Antes disso, o formulário é intencionalmente desabilitado; não anunciar o fluxo de protocolo como já funcional.
