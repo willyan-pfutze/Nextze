@@ -76,13 +76,15 @@ create index if not exists support_tickets_email_time_idx on public.support_tick
 create index if not exists support_history_ticket_idx on public.support_history(ticket_id,created_at);
 create index if not exists support_attachments_ticket_idx on public.support_attachments(ticket_id);
 create or replace function public.nextze_ticket_initial_history() returns trigger
-language plpgsql security definer set search_path = public as $$
+language plpgsql security definer set search_path = '' as $$
 begin
  insert into public.support_history(ticket_id,status,actor,public_message)
  values(new.id,new.status,'sistema','Solicitação recebida');
  return new;
 end; $$;
--- Esta função é exclusiva do gatilho, não uma API RPC pública.\nrevoke all on function public.nextze_ticket_initial_history() from public, anon, authenticated;\n-- Trigger executa internamente; proibir chamadas RPC diretas a função privilegiada.\nrevoke all on function public.nextze_ticket_initial_history() from public, anon, authenticated;\ndrop trigger if exists support_ticket_insert_history on public.support_tickets;
+-- Trigger executa internamente; proibir chamadas RPC diretas a função privilegiada.
+revoke all on function public.nextze_ticket_initial_history() from public, anon, authenticated;
+drop trigger if exists support_ticket_insert_history on public.support_tickets;
 create trigger support_ticket_insert_history after insert on public.support_tickets
 for each row execute function public.nextze_ticket_initial_history();
 -- All tables default DENY for anon/authenticated clients.
@@ -95,7 +97,8 @@ alter table public.support_history enable row level security;
 alter table public.support_messages enable row level security;
 alter table public.support_agents enable row level security;
 alter table public.support_sla enable row level security;
--- Restrinja apenas as tabelas NEXTZE: nunca revogue permissões de outros aplicativos do projeto.\nrevoke all on public.support_companies,public.support_systems,public.support_kb,public.support_tickets,public.support_attachments,public.support_history,public.support_messages,public.support_agents,public.support_sla from anon, authenticated;
+-- Restrinja apenas as tabelas NEXTZE: nunca revogue permissões de outros aplicativos do projeto.
+revoke all on public.support_companies,public.support_systems,public.support_kb,public.support_tickets,public.support_attachments,public.support_history,public.support_messages,public.support_agents,public.support_sla from anon, authenticated;
 revoke all on sequence public.nextze_ticket_seq from anon, authenticated;
 -- Private storage bucket; server-side service role only. No public URL.
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
