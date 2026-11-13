@@ -95,3 +95,16 @@ O domínio `nextze.com.br` já foi cadastrado para envio em `sa-east-1`, mas **a
 | CNAME | `rsend` | `send.forge.rmta.net` | — |
 
 **Atenção:** esses registros são para envio transacional; não substitua os quatro A do GitHub Pages nem o CNAME `www`, e não apague os registros do e-mail de recebimento. O domínio verificado para enviar e-mails não cria, por si só, uma caixa de entrada em `suporte@nextze.com.br`.
+
+## Projeto Supabase criado em 12/11/2026 (etapa posterior)
+- Organização: Nextze
+- Projeto: `nextze-support`
+- Região: `sa-east-1`
+- Project ref: `jqeonloeyvdapwmafnkm`
+- Custo informado no momento da criação: US$ 0/mês, sujeito a limites e alterações de consumo/plano.
+- Migração aplicada: `initial_nextze_support_schema`.
+- Edge Function `support-intake`: implantada e ativa, `verify_jwt=false`, com validação Turnstile obrigatória. Na ausência da chave secreta Turnstile, a função recusa solicitações (HTTP 503).
+- Endpoint público preparado: `https://jqeonloeyvdapwmafnkm.supabase.co/functions/v1/support-intake`.
+- Teste SQL com transação desfeita confirmou geração de protocolo `NXZ-2026-000001` e inserção automática de histórico. Contagem após rollback: zero chamados reais.
+- Verificado: nove tabelas `support_*` com RLS, `anon` sem SELECT/INSERT e armazenamento não público.
+- Pendências: Turnstile configurado e validado, varredura antimalware de anexos, validação de ponta a ponta, remetente Resend verificado, processamento de falhas de notificações e política de dados revisada. **Não habilitar `VITE_SUPPORT_ENABLED=true` sem resolver essas pendências.**
