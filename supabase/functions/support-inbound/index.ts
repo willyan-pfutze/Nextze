@@ -2,6 +2,7 @@
 // Activation requires RESEND_WEBHOOK_SECRET, RESEND_API_KEY and SUPPORT_INBOUND_ENABLED=true.
 // deno-lint-ignore-file no-explicit-any
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.8';
+import { Resend } from 'npm:resend@6.9.2';
 
 const PROJECT_DOMAIN = 'suporte@nextze.com.br';
 const maxWebhookBytes = 32768;
@@ -11,30 +12,21 @@ const emailPattern = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 function out(status:number,body='OK') {
   return new Response(body,{status,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 }
-function decodeSecret(secret:string):Uint8Array {
-  const value=secret.startsWith('whsec_')?secret.slice(6):secret;
-  const binary=atob(value.replace(/-/g,'+').replace(/_/g,'/'));
-  return Uint8Array.from(binary,c=>c.charCodeAt(0));
-}
-function decodeSignature(encoded:string):Uint8Array {
-  return Uint8Array.from(atob(encoded.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
-}
-function constantTimeEqual(a:Uint8Array,b:Uint8Array):boolean{
-  if(a.length!==b.length)return false;
-  let diff=0;for(let i=0;i<a.length;i++)diff|=a[i]^b[i];return diff===0;
-}
-async function validSignature(body:string,req:Request,secret:string):Promise<boolean>{
-  const id=req.headers.get('svix-id'),timestamp=req.headers.get('svix-timestamp'),header=req.headers.get('svix-signature');
-  if(!id||!timestamp||!header||id.length>256||!/^[0-9]{10,13}$/.test(timestamp))return false;
-  const t=Number(timestamp);
-  if(!Number.isFinite(t)||Math.abs(Date.now()/1000-t)>300)return false;
-  const key=await crypto.subtle.importKey('raw',decodeSecret(secret),'HMAC',false,['sign']);
-  const signed=new TextEncoder().encode(id+'.'+timestamp+'.'+body);
-  const expected=new Uint8Array(await crypto.subtle.sign('HMAC',key,signed));
-  return header.split(' ').some(candidate=>{
-    if(!candidate.startsWith('v1,'))return false;
-    try{return constantTimeEqual(decodeSignature(candidate.slice(3)),expected);}catch{return false;}
-  });
+// Resend's official webhook verifier validates the raw payload, signature and timestamp.
+async function validSignature(body:string,req:Request,secret:string,resendKey:string):Promise<boolean>{
+  const id=req.headers.get('svix-id');
+  const timestamp=req.headers.get('svix-timestamp');
+  const signature=req.headers.get('svix-signature');
+  if(!id||!timestamp||!signature)return false;
+  try{
+    const resend=new Resend(resendKey);
+    await resend.webhooks.verify({
+      payload:body,
+      headers:{'svix-id':id,'svix-timestamp':timestamp,'svix-signature':signature},
+      secret
+    });
+    return true;
+  }catch{return false;}
 }
 function address(s:unknown):string{
   if(typeof s!=='string')return '';
@@ -72,7 +64,7 @@ Deno.serve(async (req:Request)=>{
   try{raw=await req.text();if(new TextEncoder().encode(raw).length>maxWebhookBytes)return out(413,'Too large');}
   catch{return out(400,'Bad request');}
   let verified=false;
-  try{verified=await validSignature(raw,req,webhookSecret);}catch{return out(401,'Invalid signature');}
+  try{verified=await validSignature(raw,req,webhookSecret,resendKey);}catch{return out(401,'Invalid signature');}
   if(!verified)return out(401,'Invalid signature');
   let event:any;
   try{event=JSON.parse(raw);}catch{return out(400,'Invalid JSON');}
