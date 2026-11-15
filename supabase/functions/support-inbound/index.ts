@@ -56,7 +56,17 @@ Deno.serve(async (req:Request)=>{
   const resendKey=Deno.env.get('RESEND_API_KEY')||'';
   const supaUrl=Deno.env.get('SUPABASE_URL')||'';
   const supaKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||'';
-  if(!enabled||!webhookSecret||!resendKey||!supaUrl||!supaKey)return out(503,'Not configured');
+  if(!enabled||!webhookSecret||!resendKey||!supaUrl||!supaKey){
+    const missing=[
+      !enabled?'SUPPORT_INBOUND_ENABLED':'',
+      !webhookSecret?'RESEND_WEBHOOK_SECRET':'',
+      !resendKey?'RESEND_API_KEY':'',
+      !supaUrl?'SUPABASE_URL':'',
+      !supaKey?'SUPABASE_SERVICE_ROLE_KEY':'',
+    ].filter(Boolean);
+    console.error('Support inbound missing configuration names only:',missing.join(','));
+    return out(503,'Not configured');
+  }
   if(Number(req.headers.get('content-length')||0)>maxWebhookBytes)return out(413,'Too large');
   let raw:string;
   try{raw=await req.text();if(new TextEncoder().encode(raw).length>maxWebhookBytes)return out(413,'Too large');}
