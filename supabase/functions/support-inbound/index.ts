@@ -22,8 +22,8 @@ async function validSignature(body:string,req:Request,secret:string,resendKey:st
     const resend=new Resend(resendKey);
     await resend.webhooks.verify({
       payload:body,
-      headers:{'svix-id':id,'svix-timestamp':timestamp,'svix-signature':signature},
-      secret
+      headers:{id,timestamp,signature},
+      webhookSecret:secret
     });
     return true;
   }catch(error){
@@ -31,14 +31,6 @@ async function validSignature(body:string,req:Request,secret:string,resendKey:st
     console.error('Resend verification rejected',error instanceof Error ? error.name : 'unknown');
     return false;
   }
-}
-function secretTag(secret:string):string{
-  // Non-reversible operational comparison token (not an authentication primitive).
-  let n=0xcbf29ce484222325n;
-  for(const byte of new TextEncoder().encode(secret)){
-    n=((n ^ BigInt(byte))*0x100000001b3n)&0xffffffffffffffffn;
-  }
-  return n.toString(16).padStart(16,'0');
 }
 function address(s:unknown):string{
   if(typeof s!=='string')return '';
@@ -78,7 +70,6 @@ Deno.serve(async (req:Request)=>{
   let verified=false;
   try{verified=await validSignature(raw,req,webhookSecret,resendKey);}catch{return out(401,'Invalid signature');}
   if(!verified){
-    console.error('Resend signing configuration fingerprint:',secretTag(webhookSecret));
     return out(401,'Invalid signature');
   }
   let event:any;
