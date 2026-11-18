@@ -26,7 +26,19 @@ async function validSignature(body:string,req:Request,secret:string,resendKey:st
       secret
     });
     return true;
-  }catch{return false;}
+  }catch(error){
+    // Diagnostic classification only. Never log message bodies or secret values.
+    console.error('Resend verification rejected',error instanceof Error ? error.name : 'unknown');
+    return false;
+  }
+}
+function secretTag(secret:string):string{
+  // Non-reversible operational comparison token (not an authentication primitive).
+  let n=0xcbf29ce484222325n;
+  for(const byte of new TextEncoder().encode(secret)){
+    n=((n ^ BigInt(byte))*0x100000001b3n)&0xffffffffffffffffn;
+  }
+  return n.toString(16).padStart(16,'0');
 }
 function address(s:unknown):string{
   if(typeof s!=='string')return '';
@@ -65,7 +77,10 @@ Deno.serve(async (req:Request)=>{
   catch{return out(400,'Bad request');}
   let verified=false;
   try{verified=await validSignature(raw,req,webhookSecret,resendKey);}catch{return out(401,'Invalid signature');}
-  if(!verified)return out(401,'Invalid signature');
+  if(!verified){
+    console.error('Resend signing configuration fingerprint:',secretTag(webhookSecret));
+    return out(401,'Invalid signature');
+  }
   let event:any;
   try{event=JSON.parse(raw);}catch{return out(400,'Invalid JSON');}
   if(event?.type!=='email.received')return out(200);
