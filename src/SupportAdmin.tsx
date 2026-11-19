@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import ReactDOM from 'react-dom/client';
-import {ArrowLeft,CheckCircle2,Clock3,Headphones,LockKeyhole,LogOut,MessageSquare,RefreshCw,Search,ShieldCheck,Send,UserRound,AlertTriangle} from 'lucide-react';
+import {ArrowLeft,CheckCircle2,Clock3,Headphones,LockKeyhole,LogOut,MessageSquare,RefreshCw,Search,ShieldCheck,Send,AlertTriangle} from 'lucide-react';
 import './styles.css';
 import './support-admin.css';
 // Publishable key is intentionally public. Authorization happens only on the server.
