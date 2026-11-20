@@ -79,7 +79,7 @@ Deno.serve(async(req:Request)=>{
    if(name.length<2||name.length>120||client_name.length<2||client_name.length>120||version.length>60||description.length>3000||!valid.includes(project_status))return answer(400,{error:'Confira o nome, cliente, status e limites de texto'},origin);
    const projectId=typeof p.id==='string'&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(p.id)?p.id:'';
    // Unique project names are permitted across clients, not within the same client.
-   const {data:existing,error:existsError}=await db.from('support_systems').select('id,name,client_name').ilike('name',name.replace(/[\\%_]/g,'\\  if(!id)return answer(400,{error:'Identificador do chamado inválido'},origin);')).limit(200);
+   const {data:existing,error:existsError}=await db.from('support_systems').select('id,name,client_name').limit(500);
    if(existsError)return fail();
    if((existing||[]).some((x:{id:string;name:string;client_name:string|null})=>x.id!==projectId&&x.name.trim().toLocaleLowerCase()===name.toLocaleLowerCase()&&(x.client_name||'').trim().toLocaleLowerCase()===client_name.toLocaleLowerCase()))return answer(409,{error:'Este cliente já possui um projeto com esse nome'},origin);
    const fields={name,client_name,version:version||null,description:description||null,project_status,active:project_status!=='encerrado',updated_at:new Date().toISOString()};
