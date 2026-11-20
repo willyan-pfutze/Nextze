@@ -71,7 +71,7 @@ Deno.serve(async(req:Request)=>{
   if(challengeError)return json(503,{error:'Consulta indisponível'},origin);
   if(!challenge||challenge.attempts>=5)return json(403,{error:'Código inválido ou expirado'},origin);
   // Atomic attempt increment prevents parallel guesses from bypassing retry quota.
-  const {data:reserved,error:reserveError}=await db.from('support_lookup_challenges').update({attempts:challenge.attempts+1}).eq('id',challenge.id).eq('attempts',challenge.attempts).eq('consumed_at',null).lt('attempts',5).select('id');
+  const {data:reserved,error:reserveError}=await db.from('support_lookup_challenges').update({attempts:challenge.attempts+1}).eq('id',challenge.id).eq('attempts',challenge.attempts).is('consumed_at',null).lt('attempts',5).select('id');
   if(reserveError||!reserved?.length)return json(403,{error:'Código inválido ou expirado'},origin);
   const expected=await hash(challenge.salt+':'+code);
   if(!same(expected,challenge.code_hash))return json(403,{error:'Código inválido ou expirado'},origin);
