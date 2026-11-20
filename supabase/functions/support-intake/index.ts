@@ -36,7 +36,10 @@ Deno.serve(async(req)=>{
   const token=str(form.get('turnstile_token'),3000,true);
   const verify=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams({secret:captchaSecret,response:token,remoteip:req.headers.get('cf-connecting-ip')||''})});
   const verdict=await verify.json();
-  if(!verify.ok||verdict.success!==true||!allowed.some(o=>new URL(o).hostname===verdict.hostname))return response({error:'Verificação antispam inválida. Atualize a página e tente novamente.'},400,origin);
+  if(!verify.ok||verdict.success!==true||!allowed.some(o=>new URL(o).hostname===verdict.hostname)){
+   console.warn('support-intake siteverify rejected',JSON.stringify({success:verdict.success===true,hostname:typeof verdict.hostname==='string'?verdict.hostname:null,error_codes:Array.isArray(verdict['error-codes'])?verdict['error-codes']:[],http_status:verify.status}));
+   return response({error:'Verificação antispam inválida. Atualize a página e tente novamente.'},400,origin);
+  }
   if(str(form.get('privacy'),5,true)!=='true')return response({error:'Confirme as informações de privacidade.'},400,origin);
   const company=str(form.get('company'),120,true),requester=str(form.get('requester'),120,true);
   const email=str(form.get('email'),254,true).toLowerCase();
