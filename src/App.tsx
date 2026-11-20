@@ -60,7 +60,31 @@ export default function App(){
  <section id="segmentos" className="section segments"><div className="container"><Heading eyebrow="ONDE PODEMOS ATUAR" title={<>Tecnologia para diferentes <span>formas de empreender.</span></>} desc="Cada operação tem desafios próprios. Desenvolvemos soluções orientadas às necessidades de cada segmento."/><div className="segments-grid">{sectors.map(s=><div className="segment" key={s.title}><s.icon size={26} strokeWidth={1.5}/><strong>{s.title}</strong><ArrowUpRight size={17} className="segment-corner"/></div>)}</div></div></section>
  <section id="processo" className="section process"><div className="container"><div className="process-top"><Heading eyebrow="NOSSO PROCESSO" title={<>Do problema à solução. <span>Sem complicação.</span></>} desc="Uma jornada clara, construída em parceria com você."/></div><div className="steps-grid">{steps.map((s,i)=><article className="step" key={s.n}><div className="step-number">{s.n}{i<3&&<span className="step-track"/>}</div><h3>{s.title}</h3><p>{s.text}</p></article>)}</div></div></section>
  <section id="sobre" className="section about"><div className="container about-grid"><div className="about-graphic" aria-hidden="true"><span className="outline-label">NEXT / FORWARD</span><div className="about-arrows"><span/><span/><span/></div><span className="about-sign">MOVE YOUR BUSINESS FORWARD.</span></div><div className="about-copy"><Heading eyebrow="QUEM SOMOS" title={<>Construímos o próximo passo <span>do seu negócio.</span></>} /><p>A NEXTZE é uma iniciativa de tecnologia voltada a ajudar empresas a tornar seus processos mais simples, conectados e eficientes.</p><p>Acreditamos que boas soluções começam com uma compreensão real do problema. Por isso, unimos desenvolvimento de software, automação e olhar operacional para transformar necessidades em ferramentas úteis.</p><div className="about-signature">NEXTZE <span>— Processos inteligentes. Negócios eficientes.</span></div></div></div></section>
- <section id="contato" className="contact"><div className="container contact-grid"><div><span className="eyebrow eyebrow-light"><span className="eyebrow-line"/> VAMOS CONVERSAR?</span><h2>Seu próximo avanço<br/>começa com uma <em>conversa.</em></h2><p>Conte o que está travando sua operação. Vamos entender juntos como a tecnologia pode ajudar.</p><div className="contact-actions">{whatsappContacts.map(contact=><a key={contact.number} className="btn btn-primary" href={contact.url} target="_blank" rel="noopener noreferrer" aria-label={'Conversar com a NEXTZE pelo WhatsApp '+contact.display}>{contact.label} <ArrowUpRight size={19}/></a>)}{mailUrl&&<a className="contact-email" href={mailUrl}><Mail size={20}/>{email}</a>}{whatsappContacts.length===0&&!mailUrl&&<p className="contact-pending">Canais comerciais em configuração. Em breve, você poderá falar diretamente com a NEXTZE por aqui.</p>}</div></div><div className="contact-art" aria-hidden="true"><div className="contact-ring"><ArrowUpRight size={100} strokeWidth={1.2}/></div><div className="contact-art-label">VAMOS CONSTRUIR O PRÓXIMO PASSO</div></div></div></section>
+ <section id="contato" className="contact"><div className="container">
+  <div className="contact-intro"><span className="eyebrow eyebrow-light"><span className="eyebrow-line"/> COMO PODEMOS AJUDAR?</span><h2>O próximo passo começa <em>aqui.</em></h2><p>Escolha o atendimento que você procura. Assim, sua solicitação chega ao canal certo desde o primeiro contato.</p></div>
+  <div className="contact-choice-grid">
+   <article className="contact-choice-card contact-choice-commercial">
+    <div className="contact-choice-heading"><span className="contact-choice-icon"><BriefcaseBusiness size={27} strokeWidth={1.7}/></span><span className="contact-choice-tag">NOVOS PROJETOS</span></div>
+    <h3>Quero uma solução para minha empresa</h3>
+    <p>Precisa desenvolver um sistema, automatizar processos ou integrar ferramentas? Converse com a NEXTZE para avaliarmos seu projeto e prepararmos uma proposta.</p>
+    <div className="contact-choice-links">
+     {whatsappContacts.map(contact=><a key={contact.number} href={contact.url} target="_blank" rel="noopener noreferrer" className="contact-choice-link"><span>{contact.label}<small>{contact.display}</small></span><ArrowUpRight size={20}/></a>)}
+     {mailUrl&&<a href={mailUrl} className="contact-choice-link"><span><Mail size={16}/> Solicitar por e-mail</span><ArrowUpRight size={20}/></a>}
+     {whatsappContacts.length===0&&!mailUrl&&<span className="contact-pending">Canal de cotações em configuração.</span>}
+    </div>
+   </article>
+   <article className="contact-choice-card contact-choice-support">
+    <div className="contact-choice-heading"><span className="contact-choice-icon"><Headphones size={27} strokeWidth={1.7}/></span><span className="contact-choice-tag">CLIENTES NEXTZE</span></div>
+    <h3>Preciso de suporte técnico</h3>
+    <p>Já utiliza uma solução NEXTZE? Registre um problema, esclareça dúvidas ou acompanhe uma solicitação existente na nossa Central de Suporte.</p>
+    <div className="contact-choice-links">
+     <a href="./suporte/" className="contact-choice-link contact-choice-main-link"><span>Abrir chamado de suporte<small>Registre sua solicitação com protocolo</small></span><ArrowUpRight size={20}/></a>
+     <a href="./suporte/consultar/" className="contact-choice-link"><span>Consultar chamado<small>Acompanhe o status do atendimento</small></span><ArrowUpRight size={20}/></a>
+    </div>
+    <p className="contact-choice-note">Atendimento conforme os prazos e condições de suporte previstos em contrato.</p>
+   </article>
+  </div>
+ </div></section>
  </main><footer className="footer"><div className="container"><div className="footer-main"><div><Brand/><p>Tecnologia que transforma processos.</p></div><div className="footer-nav"><a href="#solucoes">Soluções</a><a href="#diferenciais">Diferenciais</a><a href="#processo">Como trabalhamos</a><a href="#sobre">Sobre nós</a><a href="#contato">Contato</a><a href="./suporte/">Suporte</a></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} NEXTZE. Todos os direitos reservados.</span><span>nextze.com.br</span><a href="#inicio">Voltar ao topo <ArrowUpRight size={15}/></a></div></div></footer>
  </>;
 }
