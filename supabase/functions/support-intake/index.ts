@@ -3,7 +3,9 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.8';
 
 const allowed = (Deno.env.get('SUPPORT_ALLOWED_ORIGINS') || 'https://nextze.com.br,https://www.nextze.com.br').split(',').map(s=>s.trim());
-// Controlled public-form testing enabled at the owner's request (2026-11-20).\n// Turnstile, origin validation, server-side throttling and disabled attachments remain mandatory.\nconst intakeEnabled = true;
+// Controlled public-form testing enabled at the owner's request (2026-11-20).
+// Turnstile, origin validation, server-side throttling and disabled attachments remain mandatory.
+const intakeEnabled = true;
 // Keep attachments off until the organization provides a malware scanning service.
 const attachmentsEnabled = Deno.env.get('SUPPORT_ATTACHMENTS_ENABLED') === 'true';
 const maxFile = 5 * 1024 * 1024;
