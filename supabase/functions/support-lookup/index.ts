@@ -31,7 +31,11 @@ Deno.serve(async(req:Request)=>{
   try{
    const response=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({secret:captcha,response:token,remoteip:req.headers.get('cf-connecting-ip')||''})});
    const result=await response.json();
-   if(!response.ok||!result.success||!allowed.some(x=>new URL(x).hostname===result.hostname))return json(400,{error:'Verificação antispam inválida'},origin);
+   if(!response.ok||!result.success||!allowed.some(x=>new URL(x).hostname===result.hostname)){
+    // Diagnostic data only: never log the secret or Turnstile response token.
+    console.warn('support-lookup siteverify rejected',JSON.stringify({success:result.success===true,hostname:typeof result.hostname==='string'?result.hostname:null,error_codes:Array.isArray(result['error-codes'])?result['error-codes']:[],http_status:response.status}));
+    return json(400,{error:'Verificação antispam inválida. Atualize a verificação e tente novamente.'},origin);
+   }
   }catch{return json(503,{error:'Serviço antispam indisponível'},origin);}
   // Even successful CAPTCHA requests are throttled by anonymized remote IP hash.
   const ip=req.headers.get('cf-connecting-ip')||req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';
