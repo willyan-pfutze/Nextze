@@ -46,7 +46,7 @@ Deno.serve(async(req)=>{
   const company=str(form.get('company'),120,true),requester=str(form.get('requester'),120,true);
   const email=str(form.get('email'),254,true).toLowerCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Informe um e-mail válido.');
-  const phone=str(form.get('phone'),30,true),system=str(form.get('system'),120,true);
+  const phone=str(form.get('phone'),30,true),system=str(form.get('system'),120,true),issueArea=str(form.get('issue_area'),160);
   const type=str(form.get('type'),80,true),title=str(form.get('title'),160,true);
   const description=str(form.get('description'),6000,true),impact=str(form.get('impact'),100,true);
   const attempted=str(form.get('attempted'),3000);
@@ -70,8 +70,15 @@ Deno.serve(async(req)=>{
   const {count,error:countError}=await db.from('support_tickets').select('id',{count:'exact',head:true}).eq('requester_email',email).gte('created_at',hour);
   if(countError)throw Error('Serviço temporariamente indisponível.');
   if((count||0)>=3)return response({error:'Limite temporário de solicitações atingido. Utilize o suporte previsto no seu contrato.'},429,origin);
+  // Never trust a typed name alone across companies. Link only one exact project+client match.
+  // Otherwise preserve the typed system and leave association for staff review.
+  const {data:matches,error:matchError}=await db.from('support_systems').select('id,name,client_name,active').eq('active',true).limit(500);
+  if(matchError)throw Error('Não foi possível validar o sistema informado.');
+  const normalize=(value:string)=>value.trim().normalize('NFKC').toLocaleLowerCase('pt-BR');
+  const validMatches=(matches||[]).filter(p=>p.client_name&&normalize(p.name)===normalize(system)&&normalize(p.client_name)===normalize(company));
+  const systemId=validMatches.length===1?validMatches[0].id:null;
   const {data:ticket,error:insertError}=await db.from('support_tickets').insert({
-   company_name:company,requester_name:requester,requester_email:email,requester_phone:phone,system_name:system,
+   company_name:company,requester_name:requester,requester_email:email,requester_phone:phone,system_name:system,system_id:systemId,issue_area:issueArea||null,
    request_type:type,title,description,occurred_at:dt.toISOString(),impact,attempted,requested_priority:priority
   }).select('id,protocol,created_at').single();
   if(insertError||!ticket)throw Error('Não foi possível registrar a solicitação.');
