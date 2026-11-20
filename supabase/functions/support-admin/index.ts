@@ -34,7 +34,14 @@ Deno.serve(async(req:Request)=>{
   const sender=Deno.env.get('SUPPORT_FROM_EMAIL')||'NEXTZE Suporte <suporte@nextze.com.br>';
   if(!apiKey)return false;
   const subject='NEXTZE — Atualização do chamado '+protocol;
-  const text='Olá! O status do seu chamado '+protocol+' foi atualizado para: '+(labels[notification.status]||notification.status)+'.\n\nAcompanhe pelo site: https://nextze.com.br/suporte/consultar/\nPor segurança, você precisará confirmar seu e-mail com um código temporário.\n\nNEXTZE — Processos inteligentes. Negócios eficientes.';
+  const text=[
+   'Olá! O status do seu chamado '+protocol+' foi atualizado para: '+(labels[notification.status]||notification.status)+'.',
+   '',
+   'Acompanhe pelo site: https://nextze.com.br/suporte/consultar/',
+   'Por segurança, você precisará confirmar seu e-mail com um código temporário.',
+   '',
+   'NEXTZE — Processos inteligentes. Negócios eficientes.'
+  ].join(String.fromCharCode(10));
   let ok=false;let providerId:string|null=null;
   try{
    const res=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+apiKey,'Content-Type':'application/json','Idempotency-Key':'nxz-status-'+notification.id},body:JSON.stringify({from:sender,to:[notification.recipient_email],subject,text,reply_to:'suporte@nextze.com.br'})});
