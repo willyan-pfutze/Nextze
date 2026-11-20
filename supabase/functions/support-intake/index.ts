@@ -27,7 +27,7 @@ Deno.serve(async(req)=>{
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'content-type','Access-Control-Max-Age':'3600','Vary':'Origin'}});
  if(req.method!=='POST')return response({error:'Método não permitido'},405,origin);
  const url=Deno.env.get('SUPABASE_URL'), key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'), captchaSecret=Deno.env.get('TURNSTILE_SECRET_KEY');
- if(!intakeEnabled||!url||!key||!captchaSecret||!Deno.env.get('RESEND_API_KEY')||!Deno.env.get('SUPPORT_FROM_EMAIL'))return response({error:'Atendimento digital indisponível no momento.'},503,origin);
+ if(!intakeEnabled||!url||!key||!captchaSecret||!Deno.env.get('RESEND_API_KEY'))return response({error:'Atendimento digital indisponível no momento.'},503,origin);
  if(Number(req.headers.get('content-length')||0)>15*1024*1024)return response({error:'Tamanho total excedido.'},413,origin);
  let ticketId:string|undefined;const stored:string[]=[];
  const db=createClient(url,key,{auth:{persistSession:false}});
@@ -82,12 +82,12 @@ Deno.serve(async(req)=>{
   }
   let emailSent=false;
   const resend=Deno.env.get('RESEND_API_KEY');
-  const sender=Deno.env.get('SUPPORT_FROM_EMAIL');
+  const sender=Deno.env.get('SUPPORT_FROM_EMAIL')||'NEXTZE Suporte <suporte@nextze.com.br>';
   if(resend&&sender){
    try{
     const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+resend,'Content-Type':'application/json'},body:JSON.stringify({
      from:sender,to:[email],subject:'NEXTZE — Solicitação recebida: '+ticket.protocol,
-     html:'<div style="font-family:Arial,sans-serif;background:#0B1B3C;color:#fff;padding:32px"><h1 style="color:#00D6A3">NEXTZE</h1><p>Recebemos sua solicitação.</p><p><strong>Protocolo: '+escapeHtml(ticket.protocol)+'</strong></p><p>Assunto: '+escapeHtml(title)+'</p><p>Prioridade solicitada: '+escapeHtml(priority)+'</p><p>Primeira resposta conforme os prazos e janelas de atendimento previstos em contrato. Este e-mail não confirma atendimento imediato.</p></div>'
+     html:'<div style="font-family:Arial,sans-serif;background:#0B1B3C;color:#fff;padding:32px"><h1 style="color:#00D6A3">NEXTZE</h1><p>Recebemos sua solicitação.</p><p><strong>Protocolo: '+escapeHtml(ticket.protocol)+'</strong></p><p>Assunto: '+escapeHtml(title)+'</p><p>Prioridade solicitada: '+escapeHtml(priority)+'</p><p>Primeira resposta conforme os prazos e janelas de atendimento previstos em contrato. Este e-mail não confirma atendimento imediato.</p><p>Acompanhe o atendimento em <a style=\"color:#00D6A3\" href=\"https://nextze.com.br/suporte/consultar/\">nextze.com.br/suporte/consultar/</a>. Será necessário confirmar o e-mail cadastrado.</p></div>'
     })});
     emailSent=r.ok;
    }catch{emailSent=false;}
