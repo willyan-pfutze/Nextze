@@ -7,7 +7,7 @@ const endpoint='https://jqeonloeyvdapwmafnkm.supabase.co/functions/v1/support-lo
 const siteKey=(import.meta.env.VITE_TURNSTILE_SITE_KEY||'').trim();
 type Result={ticket:{protocol:string;title:string;status:string;priority:string;created_at:string;updated_at:string};history:{status:string;date:string;message:string|null}[]};
 const labels:Record<string,string>={aberto:'Aberto',em_triagem:'Em triagem',aguardando_informacoes:'Aguardando informações',em_analise:'Em análise',em_correcao:'Em correção',aguardando_validacao:'Aguardando validação',resolvido:'Resolvido',encerrado:'Encerrado'};
-declare global{interface Window{turnstile?:{render:(el:HTMLElement,opts:{sitekey:string;callback:(t:string)=>void;'expired-callback':()=>void;'error-callback':()=>void;theme:string})=>string;remove:(id:string)=>void;reset:(id:string)=>void}}}
+declare global{interface Window{turnstile?:{render:(el:HTMLElement,opts:{sitekey:string;callback:(t:string)=>void;'expired-callback':()=>void;'error-callback':()=>void;theme:string})=>string;remove:(id:string)=>void}}}
 function Captcha({onToken}:{onToken:(token:string)=>void}){
  const ref=useRef<HTMLDivElement>(null);
  const callback=useRef(onToken);
