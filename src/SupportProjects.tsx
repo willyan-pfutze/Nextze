@@ -1,5 +1,5 @@
 import {useEffect,useState} from 'react';
-import {ArrowLeft,BarChart3,BriefcaseBusiness,CheckCircle2,FolderKanban,Plus,RefreshCw,Save,TrendingUp} from 'lucide-react';
+import {ArrowLeft,BarChart3,BriefcaseBusiness,FolderKanban,Plus,RefreshCw,Save,TrendingUp} from 'lucide-react';
 export type Project={id:string;name:string;client_name:string|null;version:string|null;description:string|null;project_status:string;active:boolean;created_at:string;updated_at:string};
 type Stats={system_id:string;total_tickets:number;open_tickets:number;resolved_tickets:number;urgent_tickets:number;problem_tickets:number;last_ticket_at:string|null};
 type Area={system_id:string;issue_area:string;ticket_count:number;open_count:number};
